@@ -1,0 +1,14 @@
+@import './variables.scss';
+
+html {
+	font-family: $font-family;
+    font-size: 16px;
+}
+
+body {
+    margin: 0;
+}
+
+div#root {
+    height: 100vh;
+}
