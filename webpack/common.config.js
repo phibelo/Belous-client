@@ -4,10 +4,8 @@
 
 const path = require('path')
 const webpack = require('webpack')
-const ExtractTextPlugin = require('extract-text-webpack-plugin')
+const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
-
-const extractSass = new ExtractTextPlugin({ filename: '[name].css' })	// [name] resolves to name of bundle (e.g., authenticate, objects)
 
 // Paths are relative to the client folder, not to this config file, as this is where node is run from
 
@@ -25,29 +23,27 @@ const commonConfig = {
 			},
 			{
 				test: /\.scss$/,
-				use: extractSass.extract({
-					use: [
-						{
-							loader: 'css-loader',
-							options: { importLoaders: 1 }
-						},
-						{
-							loader: 'postcss-loader',
-							options: {
-								plugins: function() {
-									return [
-										require('precss'),
-										require('autoprefixer')
-									]
-								}
+				use: [
+					MiniCssExtractPlugin.loader,
+					{
+						loader: 'css-loader',
+						options: { importLoaders: 2 }
+					},
+					{
+						loader: 'postcss-loader',
+						options: {
+							plugins: function() {
+								return [
+									require('precss'),
+									require('autoprefixer')
+								]
 							}
-						},
-						{
-							loader: 'sass-loader'
 						}
-					],
-					fallback: 'style-loader'
-				})
+					},
+					{
+						loader: 'sass-loader'
+					}
+				]
 			},
 			{
 				test: /\.(png|svg|jpg|gif)$/,
@@ -67,15 +63,18 @@ const commonConfig = {
 		publicPath: '/static/'
 	},
 	plugins: [
+		new MiniCssExtractPlugin({
+			filename: 'style.css',
+			chunkFilename: '[name].css'
+		}),
 		new webpack.NoEmitOnErrorsPlugin(),
-		extractSass,
 		new HtmlWebpackPlugin({
 			filename: '../index.html',
 			template: './template.html'
 		})
 	],
 	resolve: {
-		extensions: ['.js', '.jsx'],
+		extensions: ['.js', '.jsx', 'scss'],
 		modules: [
 			path.resolve('./src'),
 			'node_modules'

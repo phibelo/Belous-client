@@ -1,4 +1,6 @@
-@import './variables.scss';
+@import '~bootstrap/scss/functions';
+
+@import './variables';
 
 html {
 	font-family: $font-family;
